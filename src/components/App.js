@@ -1,13 +1,27 @@
 
 import React from "react";
-import './../styles/App.css';
 
-const App = () => {
+
+function App() {
+  const [students, setStudents] = useState(["aravind", "rajesh"]);
+
+  const addUser = () => {
+    setStudents((prev) => {
+      return [...prev, "Suraj Kumar"];
+    })
+  }
+
   return (
-    <div>
-        {/* Do not remove the main div */}
-    </div>
-  )
+    <>
+      <h1>All Users: </h1>
+      <div>
+        {
+          students.map(student => <p>{student}</p>)
+        }
+      </div>
+      <button onClick={addUser}>Add User</button>
+    </>
+  );
 }
 
-export default App
+export default App;
