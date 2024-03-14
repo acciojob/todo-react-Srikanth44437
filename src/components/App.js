@@ -1,27 +1,74 @@
+import React, { useState } from "react";
+import "./todo.css";
 
-import React from "react";
+let id = 0;
 
+function TodoApp() {
+  const [inputValue, setInputValue] = useState('');
+  const [tasks, setTasks] = useState([]);
+  const [editingTaskId, setEditingTaskId] = useState(null);
 
-function App() {
-  const [students, setStudents] = useState(["aravind", "rajesh"]);
+  const createNewTodo = () => {
+    const found = tasks.some(task => task.title === inputValue);
+    if (found) {
+      alert("Already added the task");
+    } else {
+      setTasks([...tasks, { title: inputValue, id: ++id }]);
+      setInputValue('');
+    }
+  }
 
-  const addUser = () => {
-    setStudents((prev) => {
-      return [...prev, "Suraj Kumar"];
-    })
+  const addTodo = () => {
+    if (editingTaskId) {
+      const updatedTasks = tasks.map(task =>
+        task.id === editingTaskId ? { ...task, title: inputValue } : task
+      );
+      setTasks(updatedTasks);
+      setEditingTaskId(null);
+      setInputValue('');
+    } else {
+      createNewTodo();
+    }
+  }
+
+  const removeTask = (taskId) => {
+    const remainingTasks = tasks.filter(task => task.id !== taskId);
+    setTasks(remainingTasks);
+  }
+
+  const onEdit = (taskId) => {
+    const { title } = tasks.find(task => task.id === taskId);
+    setInputValue(title);
+    setEditingTaskId(taskId);
   }
 
   return (
-    <>
-      <h1>All Users: </h1>
+    <div style={{ margin: "20px" }}>
+      <h2>To-Do List</h2>
       <div>
-        {
-          students.map(student => <p>{student}</p>)
-        }
+        <input
+          placeholder="Enter Todo"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button onClick={addTodo}>{editingTaskId ? 'Edit Todo' : 'Add Todo'}</button>
       </div>
-      <button onClick={addUser}>Add User</button>
-    </>
+      <ul className="tasks-list">
+        {tasks.map((task) => (
+          <li key={task.id} className={`task ${task.id === editingTaskId ? 'active' : ''}`}>
+            <div>
+              <span>{task.id}</span>
+              <span>{task.title}</span>
+            </div>
+            <div>
+              <button onClick={() => onEdit(task.id)}>Edit</button>
+              <button onClick={() => removeTask(task.id)}>Delete</button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
-export default App;
+export default TodoApp;
